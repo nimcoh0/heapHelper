@@ -1,0 +1,6 @@
+C:\Program Files\Java\jdk1.8.0_261\include
+C:\work\myprojects\java\openjdk-8-source-master\jdk\src\windows\javavm\export
+
+C:\work\mingw64\bin\gcc -m64 "-IC:\Program Files\Java\jdk1.8.0_261\include" "-IC:\work\mingw64\include"   "-IC:\work\myprojects\java\openjdk-8-source-master\jdk\src\share\demo\jvmti\agent_util" "-IC:\work\myprojects\java\openjdk-8-source-master\jdk\src\windows\javavm\export" -O0 -g3 -Wall -c -fmessage-length=0 -o Debug/heapHelper.o "heapHelper.c" 
+
+gcc -m64 -shared -o Debug/libHeapHelper.dll Debug/heapHelper.o 

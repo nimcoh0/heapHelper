@@ -84,15 +84,21 @@ JNIEXPORT jobjectArray JNICALL Java_org_softauto_jvm_HeapHelper_findInstances(JN
 
 
          }
-    int count = 0;
-    jvmtiHeapCallbacks callbacks;
-    (void)memset(&callbacks, 0, sizeof(callbacks));
-    callbacks.heap_iteration_callback = &HeapObjectCallback;
+    //int count = 0;
+    //jvmtiHeapCallbacks callbacks;
+    //(void)memset(&callbacks, 0, sizeof(callbacks));
+    //callbacks.heap_iteration_callback = &HeapObjectCallback;
 
     //force GC run
-    (*jvmti)->ForceGarbageCollection(jvmti);
+    //(*jvmti)->ForceGarbageCollection(jvmti);
     //get all klass instances
-    jvmtiError error = (*jvmti)->IterateThroughHeap(jvmti,0, klass, &callbacks, &count);
+    jvmtiError error = (*jvmti)->IterateOverInstancesOfClass(jvmti,klass, JVMTI_HEAP_OBJECT_EITHER,
+                                           HeapObjectCallback, NULL);
+
+
+
+
+    //jvmtiError error = (*jvmti)->IterateThroughHeap(jvmti,0, klass, &callbacks, &count);
     if ( error != JVMTI_ERROR_NONE ) {
          char       *error_str;
          const char *str;
@@ -103,13 +109,15 @@ JNIEXPORT jobjectArray JNICALL Java_org_softauto_jvm_HeapHelper_findInstances(JN
      }
 
      jlong tag = 1;
+     jint count;
      jobject* instances;
      jobjectArray ret;
      (*jvmti)->GetObjectsWithTags(jvmti,1, &tag, &count, &instances, NULL);
-     jmethodID cid = (*env)->GetMethodID(env,klass, "<init>", "()V");
-     if(cid == NULL){
-    	 printf("fail to get constructor id \n");
-     }
+     printf("Found %d objects with tag\n", count);
+     //jmethodID cid = (*env)->GetMethodID(env,klass, "<init>", "()V");
+     //if(cid == NULL){
+    	// printf("fail to get constructor id \n");
+     //}
      //build the return array
      ret= (jobjectArray)(*env)->NewObjectArray(env,count,klass,  NULL);
      int i;
@@ -117,6 +125,7 @@ JNIEXPORT jobjectArray JNICALL Java_org_softauto_jvm_HeapHelper_findInstances(JN
     	  //(*env)->SetObjectArrayElement(env,ret,i,(*env)->NewObject(env,klass, cid, instances[i]));
     	  (*env)->SetObjectArrayElement(env,ret,i,instances[i]);
        }
+     (*jvmti)->Deallocate(jvmti,(unsigned char*)instances);
  return (ret);
 }
 

@@ -18,5 +18,6 @@
 JNIEXPORT jint JNICALL Agent_OnLoad(JavaVM *jvm, char *options, void *reserved);
 JNIEXPORT jint JNICALL Agent_OnAttach(JavaVM* vm, char* options, void* reserved);
 JNIEXPORT jobjectArray JNICALL Java_org_softauto_jvm_HeapHelper_findInstances(JNIEnv *env, jclass thisClass, jclass klass);
+JNIEXPORT jobjectArray JNICALL Java_org_softauto_jvm_HeapHelper_cleanInstances(JNIEnv *env);
 
 

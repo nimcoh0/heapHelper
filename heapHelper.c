@@ -51,6 +51,27 @@ static jint JNICALL HeapObjectCallback(jlong class_tag, jlong size, jlong* tag_p
     return JVMTI_ITERATION_CONTINUE;
 }
 
+JNIEXPORT jobjectArray JNICALL Java_org_softauto_jvm_HeapHelper_cleanInstances(JNIEnv *env)
+{
+	JavaVM* vm;
+		    jint err = (*env)->GetJavaVM(*env,&vm);
+		    if (err != JNI_OK)
+		    	    	    {
+		    	    	        printf("Failed to get env env!\n");
+		    	    	        _flushall();
+
+		    	    	    }
+	jvmtiEnv* jvmti;
+		jint err1 = (*vm)->GetEnv(vm, (void **)&jvmti, JVMTI_VERSION_1);
+		if (err1 != JNI_OK)
+		        	    {
+		        	        printf("Failed to get JVMTI env!\n");
+		        	        _flushall();
+
+		       	    }
+	(*jvmti)->ForceGarbageCollection(jvmti);
+}
+
 JNIEXPORT jobjectArray JNICALL Java_org_softauto_jvm_HeapHelper_findInstances(JNIEnv *env, jclass thisClass, jclass klass)
 {
 
@@ -58,7 +79,7 @@ JNIEXPORT jobjectArray JNICALL Java_org_softauto_jvm_HeapHelper_findInstances(JN
 	    jint err = (*env)->GetJavaVM(*env,&vm);
 	    if (err != JNI_OK)
 	    	    {
-	    	        printf("Failed to get JVMTI env!\n");
+	    	        printf("Failed to get env env!\n");
 	    	        _flushall();
 
 	    	    }
